@@ -17,6 +17,29 @@
  */
 
 // TODO Votre code ici.
+$server = 'localhost';
+$user = 'root';
+$pwd = '';
+$db = 'blog';
+
+try {
+    $connect = new PDO("mysql:host=$server;dbname=$db;charset=utf8", $user, $pwd);
+
+    $request = $connect->prepare("
+            SELECT article.id, article.title, article.content, categorie.name
+            FROM article
+            INNER JOIN categorie ON categorie.id = article.category_fk
+    ");
+
+    $liste = $request->execute();
+
+    if($liste) {
+        foreach ($request->fetchAll() as $value) {
+            echo "<div>";
+            print_r($value);
+            echo "</div>";
+        }
+    }
 
 
 /**
@@ -25,7 +48,22 @@
 
 // TODO Votre code ici.
 
+    $request = $connect->prepare("
+            SELECT article.id, article.title, article.content, categorie.name, auteur.firstName, auteur.lastName
+            FROM article
+            INNER JOIN categorie ON categorie.id = article.category_fk
+            INNER JOIN auteur ON auteur.id = article.author_fk
+    ");
 
+    $liste = $request->execute();
+
+    if($liste) {
+        foreach ($request->fetchAll() as $value) {
+            echo "<div>";
+            print_r($value);
+            echo "</div>";
+        }
+    }
 /**
  * 5. Ajoutez un utilisateur dans la table utilisateur.
  *    Ajoutez des commentaires et liez un utilisateur au commentaire.
@@ -33,3 +71,23 @@
  */
 
 // TODO Votre code ici.
+
+    $request = $connect->prepare("
+            SELECT commentaire.id, commentaire.content, utilisateur.firstName, utilisateur.lastName
+            FROM commentaire
+            left JOIN utilisateur ON utilisateur.id = commentaire.user_fk
+    ");
+
+    $liste = $request->execute();
+
+    if($liste) {
+        foreach ($request->fetchAll() as $value) {
+            echo "<div>";
+            print_r($value);
+            echo "</div>";
+        }
+    }
+}
+catch (PDOException $exception) {
+    echo "Erreur de connexion: " . $exception->getMessage();
+}
